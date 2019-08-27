@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68001f77-4291-4151-9653-f116ad3fae0e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Astar/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Astar/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Astar/VisualFrame$RenderThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Astar/VisualFrame$RenderThread.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Astar/VisualFrame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Astar/VisualFrame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VisualFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VisualFrame.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
