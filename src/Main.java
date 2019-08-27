@@ -3,9 +3,10 @@ import java.util.List;
 
 public class Main extends Canvas {
 
-    public static void main(String[] args) {
-        
-        new VisualFrame();
+    static VisualFrame frame;
 
+    public static void main(String[] args) {
+
+        frame = new VisualFrame();
     }
 }

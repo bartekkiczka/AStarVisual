@@ -5,13 +5,21 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class VisualFrame extends JPanel {
+public class VisualFrame extends JPanel implements Runnable {
 
-    private static final int RECT = 99;
+    public static final int RECT = 99;
+
+    public static Graphics2D g2d;
+
+    ExecutorService executor;
+    private Thread mainThread;
+    private boolean running;
 
     public static List<Node> path;
     Node initialNode = new Node(1,1);
@@ -27,6 +35,8 @@ public class VisualFrame extends JPanel {
     private boolean[] checkMove = new boolean[8];
 
     public VisualFrame(){
+
+        executor = Executors.newSingleThreadExecutor();
 
         for(int i=0; i<blocksArray.length; i++){
             for(int j=0; j<1; j++){
@@ -46,43 +56,69 @@ public class VisualFrame extends JPanel {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
 
+
         this.revalidate();
         this.repaint();
     }
 
     @Override
+    public void run() {
+
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
 
-            Graphics2D g2d = (Graphics2D) g;
-            g.setColor(Color.green);
-            g.fillRect(initialNode.getCol() * RECT, initialNode.getRow() * RECT, RECT, RECT);
+        g2d = (Graphics2D) g;
+        g.setColor(Color.green);
+        g.fillRect(initialNode.getCol() * RECT, initialNode.getRow() * RECT, RECT, RECT);
 
-            g.setColor(Color.blue);
-            g.fillRect(finalNode.getCol() * RECT, finalNode.getRow() * RECT, RECT, RECT);
+        g.setColor(Color.blue);
+        g.fillRect(finalNode.getCol() * RECT, finalNode.getRow() * RECT, RECT, RECT);
 
-            g.setColor(Color.gray);
-            for (int i = 0; i < blockadeArray.size(); i++) {
-                g.fillRect(blockadeArray.get(i).getValue() * RECT, blockadeArray.get(i).getKey() * RECT, RECT, RECT);
+        g.setColor(Color.gray);
+        for (int i = 0; i < blockadeArray.size(); i++) {
+            g.fillRect(blockadeArray.get(i).getValue() * RECT, blockadeArray.get(i).getKey() * RECT, RECT, RECT);
+        }
+
+        g.setColor(Color.black);
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                g.drawRect(i * RECT, j * RECT, RECT, RECT);
             }
+        }
+
+        executor.submit(() -> {
+            Thread renderThread = new Thread(new RenderThread(g));
+            renderThread.start();
+        });
+
+    }
+
+    class RenderThread implements Runnable{
+
+        private Graphics g;
+
+        public RenderThread(Graphics g){
+            this.g = g;
+        }
+
+        @Override
+        public void run() {
 
             g.setColor(Color.yellow);
-            for (int i = 1; i < path.size() - 1; i++) {
-                g.fillRect(path.get(i).getCol() * RECT, path.get(i).getRow() * RECT, RECT, RECT);
-                try{
-                    TimeUnit.SECONDS.sleep(2);
+            System.out.println("THREAD IS WORKING");
+            for (int i = 1; i < VisualFrame.path.size() - 1; i++) {
+                System.out.println(i);
+                g.fillRect(VisualFrame.path.get(i).getCol() * VisualFrame.RECT, VisualFrame.path.get(i).getRow() * VisualFrame.RECT, VisualFrame.RECT, VisualFrame.RECT);
+                try {
+                    Thread.currentThread().sleep(300);
+                    System.out.println("THREAD IS SLEEPING");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (i == path.size()-1)
-                    return;
+                System.out.println("THREAD IS AWAKE");
             }
-
-            g.setColor(Color.black);
-            for (int i = 0; i < cols; i++) {
-                for (int j = 0; j < rows; j++) {
-                    g.drawRect(i * RECT, j * RECT, RECT, RECT);
-                }
-            }
+        }
     }
-
 }
