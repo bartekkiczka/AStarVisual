@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Main extends Canvas {
 
-    static VisualFrame frame;
+    public static VisualFrame frame;
 
     public static void main(String[] args) {
 

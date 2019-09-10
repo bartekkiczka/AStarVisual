@@ -2,6 +2,8 @@ import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +13,17 @@ import java.util.concurrent.TimeUnit;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class VisualFrame extends JPanel implements Runnable {
+public class VisualFrame extends JPanel {
 
     public static final int RECT = 99;
 
     public static Graphics2D g2d;
 
-    ExecutorService executor;
-    private Thread mainThread;
-    private boolean running;
-
+    public static Timer timer;
+    public static int clock = 0;
     public static List<Node> path;
     Node initialNode = new Node(1,1);
     Node finalNode = new Node(6,12);
-    List<Node> node = null;
     int rows = 20;
     int cols = 14;
     Astar aStar = new Astar(rows,cols,initialNode,finalNode);
@@ -32,15 +31,12 @@ public class VisualFrame extends JPanel implements Runnable {
     List<Pair<Integer,Integer>> blockadeArray = new ArrayList<>();
 
     private JFrame frame;
-    private boolean[] checkMove = new boolean[8];
 
     public VisualFrame(){
 
-        executor = Executors.newSingleThreadExecutor();
-
         for(int i=0; i<blocksArray.length; i++){
             for(int j=0; j<1; j++){
-                blockadeArray.add(new Pair<Integer,Integer>(blocksArray[i][j],blocksArray[i][j+1]));
+                blockadeArray.add(new Pair<>(blocksArray[i][j],blocksArray[i][j+1]));
             }
         }
 
@@ -56,14 +52,22 @@ public class VisualFrame extends JPanel implements Runnable {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
 
+        timer = new Timer(1000, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Main.frame.nextFrame();
+                Main.frame.repaint();
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
 
         this.revalidate();
         this.repaint();
     }
 
-    @Override
-    public void run() {
-
+    public void nextFrame(){
+        clock++;
     }
 
     @Override
@@ -81,6 +85,14 @@ public class VisualFrame extends JPanel implements Runnable {
             g.fillRect(blockadeArray.get(i).getValue() * RECT, blockadeArray.get(i).getKey() * RECT, RECT, RECT);
         }
 
+        g.setColor(Color.yellow);
+        for(int i = 1; i<path.size()-1; i++){
+            if(i==1)
+                g.fillRect(path.get(1).getCol()*RECT,path.get(1).getRow()*RECT,RECT,RECT);
+            if(clock >= i)
+                g.fillRect(path.get(i).getCol()*RECT,path.get(i).getRow()*RECT,RECT,RECT);
+        }
+
         g.setColor(Color.black);
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
@@ -88,37 +100,9 @@ public class VisualFrame extends JPanel implements Runnable {
             }
         }
 
-        executor.submit(() -> {
-            Thread renderThread = new Thread(new RenderThread(g));
-            renderThread.start();
-        });
-
     }
 
-    class RenderThread implements Runnable{
+    private void frame(Graphics g){
 
-        private Graphics g;
-
-        public RenderThread(Graphics g){
-            this.g = g;
-        }
-
-        @Override
-        public void run() {
-
-            g.setColor(Color.yellow);
-            System.out.println("THREAD IS WORKING");
-            for (int i = 1; i < VisualFrame.path.size() - 1; i++) {
-                System.out.println(i);
-                g.fillRect(VisualFrame.path.get(i).getCol() * VisualFrame.RECT, VisualFrame.path.get(i).getRow() * VisualFrame.RECT, VisualFrame.RECT, VisualFrame.RECT);
-                try {
-                    Thread.currentThread().sleep(300);
-                    System.out.println("THREAD IS SLEEPING");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("THREAD IS AWAKE");
-            }
-        }
     }
 }
