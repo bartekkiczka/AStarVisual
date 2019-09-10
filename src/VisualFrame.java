@@ -52,10 +52,10 @@ public class VisualFrame extends JPanel {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        timer = new Timer(1000, new ActionListener(){
+        timer = new Timer(500, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                Main.frame.nextFrame();
+                clock++;
                 Main.frame.repaint();
             }
         });
@@ -64,10 +64,6 @@ public class VisualFrame extends JPanel {
 
         this.revalidate();
         this.repaint();
-    }
-
-    public void nextFrame(){
-        clock++;
     }
 
     @Override
@@ -99,10 +95,6 @@ public class VisualFrame extends JPanel {
                 g.drawRect(i * RECT, j * RECT, RECT, RECT);
             }
         }
-
-    }
-
-    private void frame(Graphics g){
 
     }
 }
